@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信小程序自动化反编译</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+        .app-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        .status-alert {
+            margin: 1rem 0;
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.3s;
+        }
+        .status-alert.info {
+            background-color: #e6f7ff;
+            border-color: #9ec2e5;
+            color: #007bff;
+        }
+        .status-alert.success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #28a745;
+        }
+        .status-alert.warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #ff9800;
+        }
+        .status-alert.danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #dc3545;
+        }
+        .action-buttons {
+            margin-top: 2rem;
+        }
+        .action-buttons button {
+            margin: 0 0.5rem;
+        }
+        .card-container {
+            margin-top: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .tool-intro h2 {
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.5rem;
+        }
+        .tool-intro h3 {
+            color: #6c757d;
+        }
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="app-container">
+            <h1 class="mb-4 text-center">微信小程序自动化反编译</h1>
+
+            <div class="status-alert status-alert-warning" id="compilationMessage">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    先清空小程序缓存目录，再开始监控
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button id="startMonitor" class="btn btn-primary btn-lg" onclick="startMonitoring()">
+                    <i class="bi bi-play-circle me-1"></i> 开始监控
+                </button>
+                <button id="stopMonitor" class="btn btn-secondary btn-lg" onclick="stopMonitoring()" disabled>
+                    <i class="bi bi-stop-circle me-1"></i> 停止监控
+                </button>
+                <button class="btn btn-success btn-lg ms-2" onclick="window.location.href='/browse'">
+                    <i class="bi bi-folder2-open me-1"></i> 查看输出目录
+                </button>
+                <form action="/applet_clear" method="post" class="d-inline-block">
+                    <input type="hidden" name="confirm" id="confirm_field" value="false">
+                    <button type="submit" class="btn btn-danger btn-lg ms-2" onclick="return setConfirmValue()">
+                        <i class="bi bi-trash me-1"></i> 清空目录
+                    </button>
+                </form>
+            </div>
+
+            <!-- Flash消息提示 -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mt-4">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- 工具介绍部分 -->
+        <div class="card-container mt-5">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <i class="bi bi-info-circle me-2"></i> 工具说明
+                </div>
+                <div class="card-body tool-intro">
+                    <h2>核心功能</h2>
+                    <p>本工具实现微信小程序反编译流程自动化，集成以下功能：</p>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check-circle text-primary me-2"></i> 监控小程序缓存目录变化</li>
+                        <li><i class="bi bi-check-circle text-primary me-2"></i> 自动触发反编译流程</li>
+                        <li><i class="bi bi-check-circle text-primary me-2"></i> 无缝衔接FindSomething、HaE、BurpSuite</li>
+                    </ul>
+
+                    <h3>工作原理</h3>
+                    <p>采用监控机制，每隔2秒扫描小程序缓存目录，检测到新小程序目录时自动触发反编译</p>
+
+                    <h3>使用流程</h3>
+                    <ol class="list-unstyled">
+                        <li><i class="bi bi-1-circle text-success me-2"></i> 清空监控目录</li>
+                        <li><i class="bi bi-2-circle text-success me-2"></i> 启动监控服务</li>
+                        <li><i class="bi bi-3-circle text-success me-2"></i> 重新打开目标小程序</li>
+                        <li><i class="bi bi-4-circle text-success me-2"></i> 自动反编译并生成报告</li>
+                    </ol>
+
+                    <h3>参考项目</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-link-45deg me-2"></i> <a href="https://github.com/wux1an/wxapkg" target="_blank">wxapkg by wux1an</a></li>
+                                <li><i class="bi bi-link-45deg me-2"></i> <a href="https://github.com/G0mini/PyBy2" target="_blank">PyBy2 by G0mini</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-link-45deg me-2"></i> <a href="https://mp.weixin.qq.com/s/M3mf04rmHV3S5AvvgWv-BA" target="_blank">wxapp by wwsuixin</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer text-center mt-5">
+            <p>© 2025 微信小程序自动化反编译 | 开源协议 MIT</p>
+            <p class="mt-2">
+                <a href="https://github.com/sonumb-z/AutoDecompileApplet" target="_blank" class="text-decoration-none">
+                    <i class="bi bi-github me-1"></i> 项目源码地址
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let pollingInterval = null;
+
+        $(document).ready(function() {
+            const currentStatus = "{{ monitor_status }}";
+            const messageDiv = $('#compilationMessage');
+
+            if (currentStatus !== "运行中") {
+                messageDiv.html('<div class="d-flex align-items-center"><i class="bi bi-exclamation-triangle-fill me-2"></i> 先清空小程序缓存目录，再开始监控</div>');
+                messageDiv.removeClass('status-alert-success status-alert-info status-alert-warning status-alert-danger');
+                messageDiv.addClass('status-alert-warning');
+            }
+
+            if (currentStatus === "运行中") {
+                $("#startMonitor").prop("disabled", true);
+                $("#stopMonitor").prop("disabled", false);
+                startPolling();
+            }
+        });
+
+        function startMonitoring() {
+            $.post("/start_monitor", function() {
+                const messageDiv = $('#compilationMessage');
+                messageDiv.html('');
+                messageDiv.removeClass('status-alert-warning');
+
+                startPolling();
+                $("#startMonitor").prop("disabled", true);
+                $("#stopMonitor").prop("disabled", false);
+            });
+        }
+
+        function stopMonitoring() {
+            $.post("/stop_monitor", function() {
+                stopPolling();
+
+                const messageDiv = $('#compilationMessage');
+                messageDiv.html('<div class="d-flex align-items-center"><i class="bi bi-exclamation-triangle-fill me-2"></i> 先清空小程序缓存目录，再开始监控</div>');
+                messageDiv.removeClass('status-alert-success status-alert-info status-alert-warning status-alert-danger');
+                messageDiv.addClass('status-alert-warning');
+
+                $("#startMonitor").prop("disabled", false);
+                $("#stopMonitor").prop("disabled", true);
+            });
+        }
+
+        function startPolling() {
+            if (!pollingInterval) {
+                pollingInterval = setInterval(checkCompilationStatus, 2000);
+            }
+        }
+
+        function stopPolling() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+        }
+
+        function checkCompilationStatus() {
+            fetch('/check_status')
+                .then(response => response.json())
+                .then(data => {
+                    const messageDiv = $('#compilationMessage');
+                    messageDiv.removeClass('status-alert-success status-alert-info status-alert-warning status-alert-danger');
+
+                    if (data.status === 'start') {
+                        messageDiv.html('<div class="d-flex align-items-center"><i class="bi bi-hourglass-split me-2"></i> 正在反编译...</div>');
+                        messageDiv.addClass('status-alert-info');
+                    } else if (data.status === 'end') {
+                        messageDiv.html('<div class="d-flex align-items-center"><i class="bi bi-check-circle me-2"></i> 反编译完成</div>');
+                        messageDiv.addClass('status-alert-success');
+                        window.location.href = '/browse';
+                    } else if (data.status === 'pending') {
+                        messageDiv.html('<div class="d-flex align-items-center"><i class="bi bi-hourglass me-2"></i> 等待中，请重新进入小程序</div>');
+                        messageDiv.addClass('status-alert-warning');
+                    } else {
+                        messageDiv.html('');
+                    }
+                })
+                .catch(error => {
+                    messageDiv.html('<div class="d-flex align-items-center"><i class="bi bi-exclamation-circle me-2"></i> 无法获取编译状态</div>');
+                    messageDiv.addClass('status-alert-danger');
+                });
+        }
+
+        function setConfirmValue() {
+            const confirmResult = confirm('确定清空监控目录吗？');
+            document.getElementById('confirm_field').value = confirmResult ? 'true' : 'false';
+            return confirmResult;
+        }
+    </script>
+</body>
+</html>
