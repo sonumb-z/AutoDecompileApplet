@@ -157,10 +157,10 @@ def clear_applet_dir():
 
     try:
         for entry in os.scandir(APPLET_DIR):
-            if entry.is_dir():
+            if entry.is_dir() and entry.name.startswith('wx') and len(entry.name) == 18:
                 shutil.rmtree(entry.path)
             else:
-                os.remove(entry.path)
+                pass
         logging.info(f"目录 {APPLET_DIR} 已清空", "success")
     except Exception as e:
         logging.info(f"清空目录失败：{str(e)}", "error")
