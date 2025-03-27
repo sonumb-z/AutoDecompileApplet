@@ -73,18 +73,19 @@
         }
     </style>
 </head>
-<body>
+<body data-applet-dir="{{ applet_dir }}">
     <div class="container">
         <div class="app-container">
             <h1 class="mb-4 text-center">微信小程序自动化反编译</h1>
-
             <div class="status-alert status-alert-warning" id="compilationMessage">
                 <div class="d-flex align-items-center">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     先清空小程序缓存目录，再开始监控
                 </div>
+                <div class="text-muted mt-1 small">
+                    当前监控目录：{{ applet_dir }}
+                </div>
             </div>
-
             <div class="action-buttons">
                 <button id="startMonitor" class="btn btn-primary btn-lg" onclick="startMonitoring()">
                     <i class="bi bi-play-circle me-1"></i> 开始监控
@@ -102,7 +103,6 @@
                     </button>
                 </form>
             </div>
-
             <!-- Flash消息提示 -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -261,7 +261,9 @@
         }
 
         function setConfirmValue() {
-            const confirmResult = confirm('确定清空监控目录吗？');
+            const appletDir = document.body.dataset.appletDir;
+            const message = `确定清空小程序缓存目录 ${appletDir} 吗？`;
+            const confirmResult = confirm(message);
             document.getElementById('confirm_field').value = confirmResult ? 'true' : 'false';
             return confirmResult;
         }
