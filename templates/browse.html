@@ -61,6 +61,11 @@
     </style>
 </head>
 <body>
+    <!-- 新增返回上一页按钮（放在body最前面） -->
+    <a href="javascript:history.back()" class="btn btn-primary back-btn">
+        <i class="bi bi-arrow-left-circle me-2"></i> 返回上一页
+    </a>
+
     <div class="container">
         <div class="d-flex align-items-center mb-4">
             <h1 class="mb-0">输出目录文件列表</h1>
@@ -94,10 +99,12 @@
         </div>
     </div>
 
-    <!-- 移动到右上角的返回按钮 -->
+    <!-- 移除了原有的返回主页按钮，改用上方的返回上一页按钮 -->
+    <!-- 保留原按钮的注释以供参考（如果需要同时保留两个按钮可以取消注释）
     <a href="/" class="btn btn-primary back-btn" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
-        <i class="bi bi-arrow-left-circle me-2"></i> 返回主页
+        <i class="bi bi-house-door-fill me-2"></i> 返回主页
     </a>
+    -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
