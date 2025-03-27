@@ -44,9 +44,9 @@ python main.py --appletDir="E:\\WeChat Files\\Applet" --outputDir="result"
 
 ### 🌐 访问界面
 
-浏览器访问：`http://172.29.0.1:5000`
+浏览器访问：`http://127.0.0.1:5000`
 
-![image-20250326224625960](C:\Users\52211\AppData\Roaming\Typora\typora-user-images\image-20250326224625960.png)
+![](https://cdn.jsdelivr.net/gh/sonumb-z/IMG-Repo@main/img/20250327181601364.png)
 
 ## 💡 使用流程
 
@@ -59,21 +59,21 @@ python main.py --appletDir="E:\\WeChat Files\\Applet" --outputDir="result"
 
 ### 🔍 文件浏览器
 
-![image-20250326225108368](C:\Users\52211\AppData\Roaming\Typora\typora-user-images\image-20250326225108368.png)
+![](https://cdn.jsdelivr.net/gh/sonumb-z/IMG-Repo@main/img/20250327181601366.png)
 
-![image-20250326225136653](C:\Users\52211\AppData\Roaming\Typora\typora-user-images\image-20250326225136653.png)
+![](https://cdn.jsdelivr.net/gh/sonumb-z/IMG-Repo@main/img/20250327181601367.png)
 
-![image-20250326225201062](C:\Users\52211\AppData\Roaming\Typora\typora-user-images\image-20250326225201062.png)
+![](https://cdn.jsdelivr.net/gh/sonumb-z/IMG-Repo@main/img/20250327181601368.png)
 
 ### 🕵️ 敏感信息扫描
 
 结合 **FindSomething** 插件提取接口：
 
-![image-20250327110535379](C:\Users\52211\AppData\Roaming\Typora\typora-user-images\image-20250327110535379.png)
+![](https://cdn.jsdelivr.net/gh/sonumb-z/IMG-Repo@main/img/20250327181601369.png)
 
 联动burp和HaE插件
 
-![image-20250327110744132](C:\Users\52211\AppData\Roaming\Typora\typora-user-images\image-20250327110744132.png)
+![](https://cdn.jsdelivr.net/gh/sonumb-z/IMG-Repo@main/img/20250327181601370.png)
 
 ## 📖 参考项目
 
