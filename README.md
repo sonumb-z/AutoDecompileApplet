@@ -35,7 +35,7 @@ cd AutoDecompileApplet
 # 2. 配置参数
 # 在命令行中指定：
 #   --appletDir: "E:\\WeChat Files\\Applet"  # 小程序缓存目录，需替换成自己的
-#   --outputDir: "result"                   # 反编译输出目录
+#   --outputDir: "D:\\PycharmProjects\\AutoDecompileApplet\\output" # 反编译输出目录，需替换成自己的
 # 或者直接修改 main.py 中的默认参数
 
 # 3. 启动服务
