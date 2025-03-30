@@ -2,12 +2,13 @@ import json
 import logging
 import os
 import subprocess
+import sys
 import time
 import argparse
 import shutil
 
 import requests
-from flask import Flask, request, render_template, redirect, url_for, jsonify
+from flask import Flask, request, render_template, redirect, url_for, jsonify, abort
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from threading import Lock
@@ -16,11 +17,21 @@ app = Flask(__name__)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--appletDir', default='E:\\1qq\\WeChat Files\\Applet', help='监控目录|微信小程序缓存目录Applet')
-parser.add_argument('--outputDir', default='output', help='输出目录')
+parser.add_argument('--outputDir', default='D:\\PycharmProjects\\AutoDecompileApplet\\output', help='输出目录')
 args = parser.parse_args()
 
 APPLET_DIR = args.appletDir
 DEFAULT_OUTPUT_DIR = args.outputDir
+
+if not os.path.exists(DEFAULT_OUTPUT_DIR):
+        try:
+            os.makedirs(DEFAULT_OUTPUT_DIR)
+            print(f"输出目录已创建: {DEFAULT_OUTPUT_DIR}")
+        except Exception as e:
+            print(f"创建输出目录失败: {str(e)}")
+            sys.exit(1)
+else:
+    print(f"输出目录已存在: {DEFAULT_OUTPUT_DIR}")
 
 monitor_running = False
 observer = None
@@ -111,8 +122,7 @@ class AppletDirHandler(FileSystemEventHandler):
 
                 appId = dir_name
                 appletNickname = getAppletNickname(appId)
-                currentDir = os.path.dirname(os.path.realpath(__file__))
-                appletOutputDir = os.path.join(currentDir, DEFAULT_OUTPUT_DIR, appletNickname)
+                appletOutputDir = os.path.join(DEFAULT_OUTPUT_DIR, appletNickname)
 
                 # 正确启动线程（修正参数传递方式）
                 #Thread(target=self.auto_compile, args=(APPLET_DIR, appId, appletOutputDir, appletNickname)).start()
@@ -192,7 +202,7 @@ def browse_output(subpath=""):
 
     # 检查路径是否存在
     if not os.path.exists(current_dir):
-        os.abort(404)  # 返回 404 错误页面
+        abort(404)  # 返回 404 错误页面
 
     # 获取当前目录的文件和子目录列表
     try:
@@ -220,7 +230,7 @@ def view_file(filepath):
 
     # 检查文件是否存在
     if not os.path.isfile(file_path):
-        os.abort(404)  # 返回 404 错误页面
+        abort(404)  # 返回 404 错误页面
 
     # 读取文件内容
     try:
