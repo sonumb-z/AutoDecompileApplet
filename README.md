@@ -43,7 +43,7 @@ python main.py --appletDir="E:\\WeChat Files\\Applet" --outputDir="D:\\PycharmPr
 
 # 4、桌面bat一键启动服务：命令如下，自行修改路径，保存为bat文件即可
 @echo off
-REM 自行修改项目中main.py路径、小程序缓存目录、输出目录
+REM 自行修改项目路径、小程序缓存目录、输出目录
 cd /d D:\PycharmProjects\AutoDecompileApplet\
 python main.py --appletDir="E:\1qq\WeChat Files\Applet" --outputDir="D:\PycharmProjects\AutoDecompileApplet\result"
 pause
