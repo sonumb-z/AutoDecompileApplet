@@ -35,11 +35,18 @@ cd AutoDecompileApplet
 # 2. 配置参数
 # 在命令行中指定：
 #   --appletDir: "E:\\WeChat Files\\Applet"  # 小程序缓存目录，需替换成自己的
-#   --outputDir: "result"                   # 反编译输出目录
+#   --outputDir: "D:\\PycharmProjects\\AutoDecompileApplet\\output" # 反编译输出目录，需替换成自己的
 # 或者直接修改 main.py 中的默认参数
 
 # 3. 启动服务
-python main.py --appletDir="E:\\WeChat Files\\Applet" --outputDir="result"
+python main.py --appletDir="E:\\WeChat Files\\Applet" --outputDir="D:\\PycharmProjects\\AutoDecompileApplet\\output"
+
+# 4、桌面bat一键启动服务：命令如下，自行修改路径，保存为bat文件即可
+@echo off
+REM 自行修改项目中main.py路径、小程序缓存目录、输出目录
+cd /d D:\PycharmProjects\AutoDecompileApplet\
+python main.py --appletDir="E:\1qq\WeChat Files\Applet" --outputDir="D:\PycharmProjects\AutoDecompileApplet\result"
+pause
 ```
 
 ### 🌐 访问界面
